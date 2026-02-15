@@ -13,6 +13,7 @@ node_modules/
 # Build çıktıları
 dist
 dist-ssr
+.next
 *.local
 
 # Editör / IDE

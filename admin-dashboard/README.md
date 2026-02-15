@@ -1,6 +1,6 @@
 # Admin Dashboard - Kullanıcı & Sipariş Yönetimi
 
-React ve Express.js ile geliştirilmiş fullstack admin dashboard uygulaması.
+React (Vite) ve Next.js ile geliştirilmiş fullstack admin dashboard uygulaması.
 
 ## Özellikler
 
@@ -10,7 +10,7 @@ React ve Express.js ile geliştirilmiş fullstack admin dashboard uygulaması.
 - Sipariş listesi (kart görünümü, filtreleme)
 - İstatistik kartları (toplam gelir, sipariş sayıları)
 - Responsive tasarım (mobil, tablet, desktop)
-- REST API backend (Express.js)
+- REST API backend (Next.js)
 
 ## 🛠 Teknolojiler
 
@@ -20,9 +20,8 @@ React ve Express.js ile geliştirilmiş fullstack admin dashboard uygulaması.
 - CSS3 (Grid, Flexbox, Custom Properties)
 
 **Backend:**
+- Next.js 14 (App Router, API Routes)
 - Node.js
-- Express.js
-- CORS
 
 ## Kurulum
 
@@ -53,7 +52,7 @@ admin-dashboard/
 │   ├── components/      # React componentleri
 │   ├── utils/           # Helper fonksiyonlar
 │   └── services/        # API servisleri
-├── backend/             # Express.js API
+├── backend/             # Next.js API
 └── README.md
 ```
 
