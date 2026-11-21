@@ -1,0 +1,62 @@
+.chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.chart-label {
+  font-size: 11px;
+  fill: var(--text-secondary);
+}
+
+.chart-value {
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--text-primary);
+}
+
+.donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.donut-svg {
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+}
+
+.donut-total {
+  font-size: 28px;
+  font-weight: 800;
+  fill: var(--text-primary);
+}
+
+.legend {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend strong {
+  margin-left: auto;
+  padding-left: 1.25rem;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}

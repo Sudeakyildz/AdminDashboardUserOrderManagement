@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { checkCredentials, createToken } from '@/lib/auth'
 
 export async function POST(request) {
   try {
@@ -12,10 +13,17 @@ export async function POST(request) {
       )
     }
 
+    if (!checkCredentials(email, password)) {
+      return NextResponse.json(
+        { success: false, message: 'E-posta veya şifre hatalı' },
+        { status: 401 }
+      )
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Giriş başarılı',
-      token: 'fake-jwt-token-' + Date.now(),
+      token: createToken(email),
       user: {
         email,
         name: 'Admin User',

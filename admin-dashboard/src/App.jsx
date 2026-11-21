@@ -1,38 +1,45 @@
 import { useState, useEffect } from 'react'
 import Login from './components/Login'
 import Dashboard from './components/Dashboard'
+import { useTheme } from './hooks/useTheme'
+import {
+  getToken,
+  getStoredUser,
+  clearSession,
+  UNAUTHORIZED_EVENT
+} from './services/api'
 import './App.css'
 
 function App() {
-  // Fake authentication state
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  // Oturum: backend'in verdiği token'ın varlığına göre belirlenir
+  const [user, setUser] = useState(() => (getToken() ? getStoredUser() || {} : null))
+  const { theme, toggleTheme } = useTheme()
 
-  // LocalStorage'dan authentication durumunu kontrol et
+  // API 401 dönerse (token süresi dolmuş vb.) otomatik çıkış
   useEffect(() => {
-    const authStatus = localStorage.getItem('isAuthenticated')
-    if (authStatus === 'true') {
-      setIsAuthenticated(true)
-    }
+    const onUnauthorized = () => setUser(null)
+    window.addEventListener(UNAUTHORIZED_EVENT, onUnauthorized)
+    return () => window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized)
   }, [])
 
-  // Login işlemi
-  const handleLogin = () => {
-    setIsAuthenticated(true)
-    localStorage.setItem('isAuthenticated', 'true')
-  }
+  const handleLogin = loggedInUser => setUser(loggedInUser)
 
-  // Logout işlemi
   const handleLogout = () => {
-    setIsAuthenticated(false)
-    localStorage.removeItem('isAuthenticated')
+    clearSession()
+    setUser(null)
   }
 
   return (
     <div className="App">
-      {!isAuthenticated ? (
+      {!user ? (
         <Login onLogin={handleLogin} />
       ) : (
-        <Dashboard onLogout={handleLogout} />
+        <Dashboard
+          user={user}
+          onLogout={handleLogout}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+        />
       )}
     </div>
   )

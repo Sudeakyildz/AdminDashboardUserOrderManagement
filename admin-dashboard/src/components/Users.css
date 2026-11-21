@@ -36,7 +36,7 @@
 }
 
 .users-table-container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 1) 100%);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface) 100%);
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -122,7 +122,7 @@
 
 .status-inactive {
   background: linear-gradient(135deg, rgba(148, 163, 184, 0.15) 0%, rgba(100, 116, 139, 0.15) 100%);
-  color: #64748b;
+  color: var(--text-secondary);
   box-shadow: 0 2px 8px rgba(148, 163, 184, 0.2);
 }
 
@@ -140,4 +140,39 @@
   .users-table td {
     padding: 0.75rem 0.5rem;
   }
+}
+
+/* Sıralanabilir başlıklar */
+.users-table th.sortable {
+  padding: 0;
+}
+
+.users-table th.sortable button {
+  width: 100%;
+  padding: 1.25rem 1rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.users-table th.sortable button:hover {
+  color: var(--primary-color);
+}
+
+.sort-arrow {
+  font-size: 0.65rem;
+  min-width: 0.7rem;
+  color: var(--primary-color);
+}
+
+.empty-cell {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem 1rem !important;
 }

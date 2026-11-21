@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { login } from '../services/api'
 import './Login.css'
 
 function Login({ onLogin }) {
@@ -6,6 +7,7 @@ function Login({ onLogin }) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   // E-posta formatı kontrolü
   const validateEmail = (email) => {
@@ -32,8 +34,9 @@ function Login({ onLogin }) {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    if (loading) return
     setError('')
 
     // E-posta validasyonu
@@ -67,8 +70,15 @@ function Login({ onLogin }) {
       return
     }
 
-    // Tüm validasyonlar geçti, giriş yap
-    onLogin()
+    // Tüm validasyonlar geçti, backend'e giriş isteği gönder
+    setLoading(true)
+    try {
+      const data = await login(email.trim(), password)
+      onLogin(data.user)
+    } catch (err) {
+      setError(err.message)
+      setLoading(false)
+    }
   }
 
   return (
@@ -187,14 +197,15 @@ function Login({ onLogin }) {
             )}
           </div>
 
-          <button type="submit" className="login-button">
-            <span>Giriş Yap</span>
+          <button type="submit" className="login-button" disabled={loading}>
+            <span>{loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>
           </button>
         </form>
+        <p className="login-hint">Demo hesap: admin@example.com / Admin1234</p>
       </div>
     </div>
   )

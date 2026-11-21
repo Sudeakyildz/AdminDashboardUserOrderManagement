@@ -1,5 +1,8 @@
 import { useState, useMemo } from 'react'
-import { fakeOrders } from '../utils/data'
+import { fetchOrders } from '../services/api'
+import { useApi } from '../hooks/useApi'
+import { useTableData } from '../hooks/useTableData'
+import { Loading, ErrorState, SearchBox, Pagination } from './ui'
 import { 
   filterOrdersByStatus, 
   calculateTotalRevenue, 
@@ -10,14 +13,33 @@ import {
 } from '../utils/helpers'
 import './Orders.css'
 
+const SEARCH_KEYS = ['id', 'customerName', 'customerEmail', 'product']
+
+const SORT_OPTIONS = [
+  { value: 'orderDate:desc', label: 'Tarih (yeni → eski)' },
+  { value: 'orderDate:asc', label: 'Tarih (eski → yeni)' },
+  { value: 'amount:desc', label: 'Tutar (yüksek → düşük)' },
+  { value: 'amount:asc', label: 'Tutar (düşük → yüksek)' },
+  { value: 'customerName:asc', label: 'Müşteri (A → Z)' }
+]
+
+const EMPTY = []
+
 function Orders() {
-  const [orders] = useState(fakeOrders)
+  const { data, loading, error, reload } = useApi(fetchOrders)
+  const orders = data || EMPTY
   const [filterStatus, setFilterStatus] = useState('all')
 
   // Siparişleri duruma göre filtreleme fonksiyonu kullanılıyor
   const filteredOrders = useMemo(() => {
     return filterOrdersByStatus(orders, filterStatus)
   }, [orders, filterStatus])
+
+  const table = useTableData(filteredOrders, {
+    searchKeys: SEARCH_KEYS,
+    initialSort: { key: 'orderDate', dir: 'desc' },
+    pageSize: 6
+  })
 
   // Toplam gelir hesaplama fonksiyonu kullanılıyor
   const totalRevenue = useMemo(() => {
@@ -33,6 +55,22 @@ function Orders() {
       cancelled: orders.filter(o => o.status === 'cancelled').length
     }
   }, [orders])
+
+  if (loading) {
+    return (
+      <div className="orders-page">
+        <Loading />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="orders-page">
+        <ErrorState message={error} onRetry={reload} />
+      </div>
+    )
+  }
 
   return (
     <div className="orders-page">
@@ -124,10 +162,34 @@ function Orders() {
         </button>
       </div>
 
+      {/* Arama ve sıralama */}
+      <div className="toolbar">
+        <SearchBox
+          value={table.search}
+          onChange={table.setSearch}
+          placeholder="Sipariş no, müşteri veya ürün ara..."
+        />
+        <select
+          className="select-control"
+          value={`${table.sort.key}:${table.sort.dir}`}
+          onChange={e => {
+            const [key, dir] = e.target.value.split(':')
+            table.setSort({ key, dir })
+          }}
+          aria-label="Sırala"
+        >
+          {SORT_OPTIONS.map(o => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Sipariş Listesi - Kart Görünümü */}
       <div className="orders-grid">
-        {filteredOrders.length > 0 ? (
-          filteredOrders.map(order => (
+        {table.pageItems.length > 0 ? (
+          table.pageItems.map(order => (
             <div key={order.id} className="order-card">
               <div className="order-header">
                 <span className="order-id">{order.id}</span>
@@ -164,10 +226,17 @@ function Orders() {
           ))
         ) : (
           <div className="empty-state">
-            <p>Bu durumda sipariş bulunmamaktadır.</p>
+            <p>Bu kriterlere uyan sipariş bulunmamaktadır.</p>
           </div>
         )}
       </div>
+
+      <Pagination
+        page={table.page}
+        totalPages={table.totalPages}
+        totalCount={table.totalCount}
+        onChange={table.setPage}
+      />
     </div>
   )
 }
